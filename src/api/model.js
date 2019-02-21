@@ -50,9 +50,25 @@ export function withdrawInfo(data) {
 }
 
 export function withdrawSave(data) {
-  console.log('withdrawSave params',data)
+  console.log('withdrawSave params', data)
   return request({
     url: 'api/feeconfig/creat',
+    method: 'post',
+    data
+  })
+}
+
+export function shopInfo(data) {
+  return request({
+    url: 'api/accountRankConfig/select/config',
+    method: 'get',
+    data
+  })
+}
+
+export function shopSave(data) {
+  return request({
+    url: 'api/accountRankConfig/save/systemconfig',
     method: 'post',
     data
   })

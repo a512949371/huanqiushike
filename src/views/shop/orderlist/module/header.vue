@@ -1,16 +1,13 @@
 <template>
   <div class="head-container">
     <!-- 搜索 -->
-    <el-input v-model="query.phone" clearable placeholder style="width: 240px">
-      <template slot="prepend">账号:</template>
+    <el-input v-model="query.orderNo" clearable placeholder="请输入订单编号或者账号" style="width: 300px">
+      <template slot="prepend">查询:</template>
     </el-input>
-    <!-- <el-input v-model="query.userName" clearable placeholder style="width: 300px">
-      <template slot="prepend">推荐人账号:</template>
-    </el-input> -->
     <el-select
-      v-model="query.type"
+      v-model="query.takeMethod"
       clearable
-      placeholder="会员类型"
+      placeholder="请选择提货方式"
       class="filter-item"
       style="width: 130px;margin-bottom:5px"
       @change="toQuery"
@@ -23,15 +20,45 @@
       />
     </el-select>
     <el-select
-      v-model="query.status"
+      v-model="query.payWay"
       clearable
-      placeholder="会员状态"
+      placeholder="请选择支付方式"
       class="filter-item"
       style="width: 130px;margin-bottom:5px"
       @change="toQuery"
     >
       <el-option
         v-for="item in enabledTypeOptions"
+        :key="item.key"
+        :label="item.display_name"
+        :value="item.key"
+      />
+    </el-select>
+    <el-select
+      v-model="query.payStatus"
+      clearable
+      placeholder="请选择支付状态"
+      class="filter-item"
+      style="width: 130px;margin-bottom:5px"
+      @change="toQuery"
+    >
+      <el-option
+        v-for="item in payTypeOptions"
+        :key="item.key"
+        :label="item.display_name"
+        :value="item.key"
+      />
+    </el-select>
+    <el-select
+      v-model="query.state"
+      clearable
+      placeholder="请选择订单状态"
+      class="filter-item"
+      style="width: 130px;margin-bottom:5px"
+      @change="toQuery"
+    >
+      <el-option
+        v-for="item in orderTypeOptions"
         :key="item.key"
         :label="item.display_name"
         :value="item.key"
@@ -70,10 +97,8 @@
 <script>
 import checkPermission from "@/utils/permission"; // 权限判断函数
 import { parseTime } from "@/utils/index";
-import eForm from "./form";
 // 查询条件
 export default {
-  components: { eForm },
   props: {
     roles: {
       type: Array,
@@ -88,14 +113,22 @@ export default {
     return {
       downloadLoading: false,
       queryTypeOptions: [
-        { key: "0", display_name: "普通会员" },
-        { key: "9", display_name: "系统会员" }
+        { key: "0", display_name: "自提" },
+        { key: "1", display_name: "物流配送" }
       ],
       enabledTypeOptions: [
-        { key: "0", display_name: "正常" },
-        { key: "-1", display_name: "冻结" },
-        { key: "1", display_name: "解冻" }
+        { key: "wx", display_name: "微信支付" },
+        { key: "jf", display_name: "积分支付" },
+      ],
+      payTypeOptions: [
+        { key: "0", display_name: "未支付" },
+        { key: "1", display_name: "已支付" },
+      ],
+      orderTypeOptions: [
+        { key: "201", display_name: "未发货" },
+        { key: "301", display_name: "已发货" },
       ]
+      
     };
   },
   methods: {

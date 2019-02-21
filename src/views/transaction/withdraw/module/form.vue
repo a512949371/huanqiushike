@@ -50,7 +50,7 @@
         <span>{{form.createTime}}</span>
       </el-form-item>
       <el-form-item label="操作:"></el-form-item>
-      <el-form-item label="设置状态" prop="status" class="item">
+      <el-form-item label="设置状态" prop="status" class="item" v-show="form.status==2">
         <el-radio v-model="form.status" label="1">成功提现</el-radio>
         <el-radio v-model="form.status" label="0">提现失败</el-radio>
       </el-form-item>

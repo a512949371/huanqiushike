@@ -1,49 +1,40 @@
 <template>
   <div class="head-container">
     <!-- 搜索 -->
-    <el-input v-model="query.phone" clearable placeholder style="width: 240px">
-      <template slot="prepend">账号:</template>
-    </el-input>
-    <!-- <el-input v-model="query.userName" clearable placeholder style="width: 300px">
-      <template slot="prepend">推荐人账号:</template>
-    </el-input> -->
-    <el-select
-      v-model="query.type"
-      clearable
-      placeholder="会员类型"
-      class="filter-item"
-      style="width: 130px;margin-bottom:5px"
-      @change="toQuery"
-    >
-      <el-option
-        v-for="item in queryTypeOptions"
-        :key="item.key"
-        :label="item.display_name"
-        :value="item.key"
-      />
-    </el-select>
-    <el-select
-      v-model="query.status"
-      clearable
-      placeholder="会员状态"
-      class="filter-item"
-      style="width: 130px;margin-bottom:5px"
-      @change="toQuery"
-    >
-      <el-option
-        v-for="item in enabledTypeOptions"
-        :key="item.key"
-        :label="item.display_name"
-        :value="item.key"
-      />
-    </el-select>
-    <el-button
-      class="filter-item"
-      size="mini"
-      type="primary"
-      icon="el-icon-search"
-      @click="toQuery"
-    >搜索</el-button>
+    <div class="flex">
+      <div class="flex-box-center">
+        <span class="demotime">选择起止日期:</span>
+        <el-date-picker
+          v-model="query.createTime"
+          align="right"
+          type="date"
+          placeholder="选择日期"
+          :picker-options="pickerOptions1">
+        </el-date-picker>
+        <span class="demotime">至:</span>
+        <el-date-picker
+          v-model="query.endTime"
+          align="right"
+          type="date"
+          placeholder="选择日期"
+          :picker-options="pickerOptions1">
+        </el-date-picker>
+      </div>
+      <div class="flex-box-center pl20">
+        <span class="demotime" style="width:120px">操作名称:</span>
+        <el-input placeholder="请输入内容" prefix-icon="el-icon-search" v-model="query.description"></el-input>
+      </div>
+      <div class="pl20">
+        <el-button
+          class="filter-item"
+          size="mini"
+          type="primary"
+          icon="el-icon-search"
+          @click="toQuery"
+        >搜索</el-button>
+      </div>
+      
+    </div>
     <!-- 新增 -->
     <!-- <div style="display: inline-block;margin: 0px 2px;">
       <el-button
@@ -70,10 +61,8 @@
 <script>
 import checkPermission from "@/utils/permission"; // 权限判断函数
 import { parseTime } from "@/utils/index";
-import eForm from "./form";
 // 查询条件
 export default {
-  components: { eForm },
   props: {
     roles: {
       type: Array,
@@ -87,15 +76,11 @@ export default {
   data() {
     return {
       downloadLoading: false,
-      queryTypeOptions: [
-        { key: "0", display_name: "普通会员" },
-        { key: "9", display_name: "系统会员" }
-      ],
-      enabledTypeOptions: [
-        { key: "0", display_name: "正常" },
-        { key: "-1", display_name: "冻结" },
-        { key: "1", display_name: "解冻" }
-      ]
+      pickerOptions1: {
+        disabledDate(time) {
+          return time.getTime() > Date.now();
+        },
+      }
     };
   },
   methods: {
@@ -152,3 +137,11 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.demotime {
+  font-size: 16px;
+  color: #545454;
+  padding-right: 10px;
+}
+</style>
+

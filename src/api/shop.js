@@ -40,3 +40,30 @@ export function delShopOne(data) {
     data
   })
 }
+export function addShopOne(data) {
+  return request({
+    url: 'api/product/save',
+    method: 'post',
+    data
+  })
+}
+export function editShopOne(data) {
+  return request({
+    url: 'api/product/update',
+    method: 'post',
+    data
+  })
+}
+export function orderdetail(data) {
+  return request({
+    url: 'api/order/'+data,
+    method: 'get',
+  })
+}
+export function orderlogistics(data) {
+  return request({
+    url: 'api/sendGood',
+    method: 'post',
+    data
+  })
+}

@@ -2,23 +2,15 @@
   <div class="app-container">
     <eHeader :roles="roles" :query="query"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="listdata.data" size="small" border style="width: 100%;">
-      <el-table-column prop="id" label="开始时间"/>
-      <el-table-column prop="phoneTo" label="结束时间"/>
-      <el-table-column prop="realNameTo" label="售卖单数"/>
-      <el-table-column prop="phoneIn" label="销售总额"/>
-      <el-table-column prop="realNameIn" label="分享奖"/>
-      <el-table-column prop="price" label="公排奖"/>
-      <el-table-column prop="createTime" label="体恤奖"/>
+    <el-table v-loading="loading" :data="listdata" size="small" border style="width: 100%;">
+      <el-table-column prop="startTime" label="开始时间"/>
+      <el-table-column prop="endTime" label="结束时间"/>
+      <el-table-column prop="orderNum" label="售卖单数"/>
+      <el-table-column prop="orderAmount" label="销售总额"/>
+      <el-table-column prop="shareAmount" label="分享奖"/>
+      <el-table-column prop="publicAmount" label="公排奖"/>
+      <el-table-column prop="ompassionate" label="体恤奖"/>
     </el-table>
-    <!--分页组件-->
-    <el-pagination
-      :total="listdata.count"
-      style="margin-top: 8px;"
-      layout="total, prev, pager, next, sizes"
-      @size-change="sizeChange"
-      @current-change="pageChange"
-    />
   </div>
 </template>
 
@@ -50,17 +42,19 @@ export default {
       this.$nextTick(() => {
         this.init().then(res => {
           console.log("then", res);
-          this.listdata = res;
+          this.listdata=[];
+          this.listdata.push(res) ;
         });
       });
     },
     beforeInit() {
-      this.url = "api/transfer/findTransfer";
+      this.url = "api/income/expend/selectList";
       const sort = "id,desc";
       const query = this.query;
-      const phone = query.type==1?query.phone1:query.phone2;
+      const endTime = query.endTime;
+      const startTime = query.startTime;
       const type = query.type;
-      this.params = { page: this.page, size: this.size, phone: phone,type:type };
+      this.params = { page: this.page, size: this.size, endTime: endTime,startTime:startTime };
       console.log("params", query);
       return true;
     },

@@ -54,16 +54,27 @@ export default {
           this.loading = true;
           this.postdata.account.id = this.accid;
           console.log("postdata", this.postdata);
-          getmoney(this.postdata).then(res => {
-            this.loading = false;
-            this.$notify({
-              title: "充值成功",
-              type: "success",
-              duration: 1500
+          if(Number(this.postdata.rechargeAmount)>0){
+            getmoney(this.postdata).then(res => {
+              this.loading = false;
+              this.$notify({
+                title: "充值成功",
+                type: "success",
+                duration: 1500
+              });
+              this.dialog = false;
+              this.reload();
+            }).catch(()=>{
+              this.loading = false;
             });
-            this.dialog = false;
-            this.reload();
-          });
+          }else{
+            this.$notify({
+                title: "充值金额不能小于0",
+                type: "success",
+                duration: 1500
+              });
+          }
+          
         } else {
           console.log("error submit!!");
           return false;

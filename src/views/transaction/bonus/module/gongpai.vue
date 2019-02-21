@@ -5,7 +5,7 @@
     <el-table v-loading="loading" :data="listdata.data" size="small" border style="width: 100%;">
       <el-table-column prop="id" label="序号"/>
       <el-table-column prop="accountId.userName" label="会员账号"/>
-      <el-table-column prop="name" label="会员昵称"/>
+      <el-table-column prop="nickName" label="会员昵称"/>
       <el-table-column prop="price" label="奖励金额"/>
       <el-table-column prop="accountNo" label="出局账号"/>
       <el-table-column prop="groupName" label="出局团位"/>

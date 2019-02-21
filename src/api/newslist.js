@@ -20,3 +20,24 @@ export function editnews(data) {
     data
   })
 }
+export function bannerlist(data) {
+  return request({
+    url: 'api/advertising/selectList',
+    method: 'post',
+    data
+  })
+}
+export function addbanner(data) {
+  return request({
+    url: 'api/advertising/save',
+    method: 'post',
+    data
+  })
+}
+export function editbanner(data) {
+  return request({
+    url: 'api/advertising/update',
+    method: 'post',
+    data
+  })
+}

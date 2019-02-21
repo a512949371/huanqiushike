@@ -1,5 +1,6 @@
 <template>
-  <el-tabs v-model="activeName" style="padding-left: 5px;">
+ <div class="app-container">
+  <el-tabs v-model="activeName" type="card"  style="padding-left: 5px;">
     <el-tab-pane label="邮箱配置" name="first">
       <Config/>
     </el-tab-pane>
@@ -10,6 +11,7 @@
       <Description/>
     </el-tab-pane>
   </el-tabs>
+ </div>
 </template>
 
 <script>

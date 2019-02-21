@@ -15,7 +15,11 @@
         </template>
       </el-table-column>
       <el-table-column prop="userName" label="后台充值账号"/>
-      <el-table-column prop="addTime" label="充值日期"/>
+      <el-table-column prop="addTime" label="充值日期">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.addTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="remark" label="备注"/>
     </el-table>
     <!--分页组件-->

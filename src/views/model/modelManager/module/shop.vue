@@ -1,13 +1,20 @@
 <template>
   <div class="app-container">
     <!--表格渲染-->
-    <el-form ref="form" :model="form" :rules="rules" size="small" border style="width: 100%;">
-      <el-form-item label="烧伤制度" prop="isEnable">
-        <el-radio v-model="form.isEnable" label='1'>开</el-radio>
-        <el-radio v-model="form.isEnable" label='0'>关</el-radio>
+    <el-form
+      ref="form"
+      :model="form"
+      :rules="rules"
+      size="small"
+      border
+      style="width: 100%;"
+      label-width="160px"
+    >
+      <el-form-item label="自动排单时间设置：" prop="orderTime">
+        <el-input v-model="form.orderTime" style="width: 370px;"/> 秒
       </el-form-item>
-      <el-form-item label="推荐奖励百分比：" prop="percent" >
-        <el-input v-model="form.percent" style="width: 370px;"/> %
+      <el-form-item label="账号VIP等级上限：" prop="upperLimit">
+        <el-input v-model="form.upperLimit" style="width: 370px;"/>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="center">
@@ -16,7 +23,7 @@
   </div>
 </template>
 <script>
-import { rulesInfo, rulesSave } from "@/api/model";
+import { shopInfo, shopSave } from "@/api/model";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
@@ -27,12 +34,14 @@ export default {
     return {
       dialog: false,
       loading: false,
-      form: { isEnable: 0, percent: "" },
+      form: { orderTime: 0, upperLimit: "" },
       rules: {
-        percent: [
-          { required: true, message: "请输入推荐奖励百分比", trigger: "blur" }
+        orderTime: [
+          { required: true, message: "请输入自动排单时间", trigger: "blur" }
         ],
-        isEnable: [{ required: true, message: "状态不能为空", trigger: "blur" }]
+        upperLimit: [
+          { required: true, message: "请输入账号VIP等级上限", trigger: "blur" }
+        ]
       }
     };
   },
@@ -43,17 +52,18 @@ export default {
   methods: {
     init() {
       var that = this;
-      rulesInfo().then(res => {
-        that.form = res.data;
+      shopInfo().then(res => {
+        console.log('shopInfo',res)
+        that.form = res.infos;
       });
     },
     doSubmit() {
-      console.log('doSubmit');
+      console.log("doSubmit");
       this.$refs["form"].validate(valid => {
-        console.log('valid',valid);
+        console.log("valid", valid);
         if (valid) {
           this.loading = true;
-          rulesSave(this.form)
+          shopSave(this.form)
             .then(res => {
               this.resetForm();
               this.$notify({
@@ -78,7 +88,7 @@ export default {
       this.dialog = false;
       this.$refs["form"].resetFields();
       this.roleIds = [];
-      this.form = { username: "", email: "" };
+      this.form = { orderTime: "", upperLimit: "" };
     }
   }
 };

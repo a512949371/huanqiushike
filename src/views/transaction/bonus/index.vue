@@ -1,5 +1,6 @@
 <template>
-  <el-tabs v-model="activeName" style="padding-left: 5px;">
+ <div class="app-container">
+  <el-tabs v-model="activeName" type="card" style="padding-left: 5px;">
     <el-tab-pane label="分享奖" name="first">
       <fenxiang/>
     </el-tab-pane>
@@ -10,6 +11,7 @@
       <gongpai/>
     </el-tab-pane>
   </el-tabs>
+ </div>
 </template>
 
 <script>

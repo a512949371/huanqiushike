@@ -1,8 +1,8 @@
-<template>
+<!--<template>
   <div class="dashboard-container">
     <component :is="currentRole"/>
   </div>
-</template>
+</template>-->
 
 <script>
 import { mapGetters } from 'vuex'

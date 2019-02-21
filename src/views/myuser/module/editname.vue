@@ -63,6 +63,8 @@ export default {
             });
             this.dialog = false;
             this.reload();
+          }).catch(()=>{
+            this.loading = false;
           });
         } else {
           console.log("error submit!!");

@@ -19,7 +19,7 @@
           <span v-else>登 录 中...</span>
         </el-button>
       </el-form-item>
-      <p class="login-tip">系统默认用户名：admin，密码：123456</p>
+      <p class="login-tip">系统默认用户名：admin，密码：1234567</p>
     </el-form>
   </div>
 </template>

@@ -9,12 +9,13 @@
       <el-table-column prop="title" label="商品名称"/>
       <el-table-column label="商品分类">
         <template slot-scope="scope">
-          <span>{{scope.row.productClass.className}}</span>
+          <span v-if="scope.row.productClass.className">{{scope.row.productClass.className}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="sort" label="排序"/>
       <el-table-column prop="price" label="价格"/>
       <el-table-column prop="guige" label="规格"/>
+      <el-table-column prop="number" label="库存"/>
       <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button slot="reference" type="warning" size="mini" @click="to(scope.row.id)">编辑</el-button>
@@ -97,14 +98,34 @@ const Index = {
     add() {
       const _this = this.$refs.edit;
       this.isadd = false;
+      _this.imgdata=[];
+      _this.imglist=[];
       _this.dialog = true;
     },
     to(id) {
       const _this = this.$refs.edit;
       this.isadd = true;
+      _this.imgdata=[];
+      _this.imglist=[];
+       console.log("res?", _this.imgdata,_this.imglist);
       selectShopOne(id).then(res => {
         console.log("res?", res);
-        _this.postdata = res.data
+        _this.postdata = res
+        let imgdata={
+              name:res.imgUrl,
+              url:res.imgUrl
+            }
+        _this.imgdata.push(imgdata)
+        if(res.imglist.length>0){
+          res.imglist.map((item)=>{
+            let data={
+              name:item.imgUrl,
+              url:item.imgUrl,
+            }
+            _this.imglist.push(data)
+          })
+        }
+        
       });
       _this.dialog = true;
     },

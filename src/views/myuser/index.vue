@@ -158,7 +158,6 @@ const Index = {
       console.log("query", query);
       const type = query.type;
       const phone = query.phone;
-      const userName = query.userName;
       const status = query.status;
       this.params = {
         page: this.page,
@@ -166,7 +165,6 @@ const Index = {
         phone: phone,
         status: status,
         type: type,
-        userName: userName
       };
       return true;
     },

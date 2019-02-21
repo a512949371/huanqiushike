@@ -10,34 +10,34 @@
       <div>
         <div class="tit">基础信息</div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">账号:</div>
             <div class="info">{{data.account.userName||''}}</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">姓名:</div>
             <div class="info">{{data.account.realName}}</div>
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">身份证号:</div>
             <div class="info">{{data.account.idCard}}</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">注册时间:</div>
             <div class="info">{{ parseTime(data.account.createTime) }}</div>
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">推荐人账号:</div>
             <div class="info">
               <span class="editname" @click="editname()">修改</span>
               {{data.parentName}}
             </div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">提现账号:</div>
             <div class="info">
               <span class="editname" @click="examine">查看</span>
@@ -48,21 +48,21 @@
       <div class="pt20">
         <div class="tit">购买信息</div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">总购买单数:</div>
             <div class="info">{{data.buyNum||0}}单</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">当前等级:</div>
             <div class="info">VIP{{data.level||0}}</div>
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">直推人数:</div>
             <div class="info">{{data.ruidNum||0}}人</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">团队人数:</div>
             <div class="info">{{ data.teamNum||0 }}人</div>
           </div>
@@ -71,14 +71,14 @@
       <div class="pt20">
         <div class="tit">余额信息</div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">充值总金额:</div>
             <div class="info">
               <span class="editname" @click="getmoney">充值</span>
               {{data.topUpAmount||0}}元
             </div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">当前余额:</div>
             <div class="info">
               <span class="editname" @click="reducemoney">扣除</span>
@@ -87,31 +87,31 @@
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">消费金额:</div>
             <div class="info">{{data.consumeAmount}}</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">公排奖励总额:</div>
             <div class="info">{{ data.publicAmount||0 }}元</div>
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">分享总奖励:</div>
             <div class="info">{{data.shareAmount||0}}元</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc">体恤总奖金:</div>
             <div class="info">{{data.compassionateAmount||0}}元</div>
           </div>
         </div>
         <div class="flex">
-          <div class="left flex-bwteen pt10 pr10">
+          <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">提现总额:</div>
             <div class="info">{{data.withdrawAmount||0}}元</div>
           </div>
-          <div class="right flex-bwteen pl10">
+          <div class="right flex-box-bwteen pl10">
             <div class="desc"></div>
             <div class="info"></div>
           </div>
@@ -133,22 +133,24 @@
           </el-table-column>
           <el-table-column label="子账号状态">
             <template slot-scope="scope">
-              <span v-if="scope.row.status=='0'">正常</span>
+              <span>{{scope.row.status}}</span>
+              <!-- <span v-if="scope.row.status=='0'">正常</span>
               <span v-if="scope.row.status=='1'">出局</span>
               <span v-if="scope.row.status=='2'">晋级</span>
-              <span v-if="scope.row.status=='3'">排位中</span>
+              <span v-if="scope.row.status=='3'">排位中</span> -->
             </template>
           </el-table-column>
           <el-table-column prop="groupEnum" label="出局位置"/>
           <el-table-column label="出局时间">
             <template slot-scope="scope">
-              <span>{{ parseTime(scope.row.effectiveTime) }}</span>
+              <span v-if="scope.row.status=='出局'">{{ parseTime(scope.row.effectiveTime) }}</span>
             </template>
           </el-table-column>
-          <el-table-column prop="level" label="等级"/>
+          <el-table-column prop="price" label="公排奖励"/>
           <el-table-column prop="createTime" label="操作">
             <template slot-scope="scope">
-              <el-button
+              <el-button 
+                v-if="scope.row.status=='正常'"
                 slot="reference"
                 type="danger"
                 size="mini"

@@ -2,15 +2,15 @@
   <div class="app-container">
     <!--表格渲染-->
     <el-form ref="form" :model="form" :rules="rules" size="small" border style="width: 100%;">
-      <el-form-item label="手续费类型：" prop="type">{{form.type}}
-        <el-radio v-model="form.type" label="1">固定金额</el-radio>
-        <el-radio v-model="form.type" label="0">百分比</el-radio>
+      <el-form-item label="手续费类型：" prop="type">
+        <el-radio v-model="form.type" label="0">固定金额</el-radio>
+        <el-radio v-model="form.type" label="1">百分比</el-radio>
       </el-form-item>
       <el-form-item label="手续费数额：" prop="handlingFee">
-        <el-input v-model="form.handlingFee" style="width: 370px;"/> <span v-show="form.type">{{form.type=='1'?'元':'%'}}</span>
+        <el-input v-model="form.handlingFee" style="width: 370px;"/> <span v-show="form.type">{{form.type=='0'?'元':'%'}}</span>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
+    <div slot="footer" class="dialog-footer" align="center">
       <el-button :loading="loading" type="primary" @click="doSubmit">保存设置</el-button>
     </div>
   </div>
@@ -63,7 +63,7 @@ export default {
                 duration: 2500
               });
               this.loading = false;
-              // this.init();
+              this.init();
             })
             .catch(err => {
               this.loading = false;
