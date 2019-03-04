@@ -7,19 +7,25 @@
       <el-table-column prop="orderNo" label="订单编号"/>
       <el-table-column prop="account" label="账号"/>
       <el-table-column prop="productName" label="商品名称"/>
+      <el-table-column label="商品属性">
+        <template slot-scope="scope">
+          <span v-if="scope.row.productModel==0">普通商品</span>
+          <span v-if="scope.row.productModel==1">公排商品</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="totalPrice" label="总价"/>
       <el-table-column prop="productNum" label="数量"/>
-      <el-table-column prop="createTime" label="下单时间">
+      <el-table-column label="下单时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.orderTime) }}</span>
         </template>
       </el-table-column>
-      <el-table-column  label="提货方式">
+      <el-table-column label="提货方式">
         <template slot-scope="scope">
           <span>{{ scope.row.takeMethod==0?'自提':'物流配送' }}</span>
         </template>
       </el-table-column>
-      <el-table-column  label="支付方式">
+      <el-table-column label="支付方式">
         <template slot-scope="scope">
           <span>{{ scope.row.payWay=="wx"?'微信支付':'积分支付' }}</span>
         </template>
@@ -46,17 +52,13 @@
     <!--分页组件-->
     <el-pagination
       :total="listdata.count"
+      :current-page="page+1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
       @current-change="pageChange"
     />
-    <edit
-      v-if="isRouterAlive"
-      ref="form"
-      :data="getdata"
-      :sup_this="sup_this"
-    />
+    <edit v-if="isRouterAlive" ref="form" :data="getdata" :sup_this="sup_this"/>
   </div>
 </template>
 <script>
@@ -64,7 +66,7 @@ import checkPermission from "@/utils/permission";
 import { parseTime } from "@/utils/index";
 import { getRoleTree } from "@/api/role";
 import initData from "@/mixins/initData";
-import { orderdetail } from '@/api/shop';
+import { orderdetail } from "@/api/shop";
 import eHeader from "./module/header";
 import edit from "./module/edit";
 const Index = {
@@ -117,14 +119,16 @@ const Index = {
     },
     to(id) {
       const _this = this.$refs.form;
-      orderdetail(id).then((res)=>{
-        console.log('ord',res)
-        this.getdata=res.data;
-        _this.courierCompany=res.data.courierCompany;
-        _this.courierNum=res.data.courierNum
-      }).catch((res)=>{
-        this.getdata=[]
-      })
+      orderdetail(id)
+        .then(res => {
+          console.log("ord", res);
+          this.getdata = res.data;
+          _this.courierCompany = res.data.courierCompany;
+          _this.courierNum = res.data.courierNum;
+        })
+        .catch(res => {
+          this.getdata = [];
+        });
       _this.dialog = true;
     },
     beforeInit() {
@@ -143,7 +147,7 @@ const Index = {
         payStatus: payStatus,
         payWay: payWay,
         state: state,
-        takeMethod: takeMethod,
+        takeMethod: takeMethod
       };
       return true;
     },

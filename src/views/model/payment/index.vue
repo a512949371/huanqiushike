@@ -7,7 +7,8 @@
         <el-radio v-model="form.type" label="1">百分比</el-radio>
       </el-form-item>
       <el-form-item label="手续费数额：" prop="handlingFee">
-        <el-input v-model="form.handlingFee" style="width: 370px;"/> <span v-show="form.type">{{form.type=='0'?'元':'%'}}</span>
+        <el-input v-model="form.handlingFee" style="width: 370px;"/>
+        <span v-show="form.type">{{form.type=='0'?'元':'%'}}</span>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer" align="center">
@@ -16,28 +17,38 @@
   </div>
 </template>
 <script>
-import { withdrawInfo,withdrawSave } from "@/api/model";
+import { withdrawInfo, withdrawSave } from "@/api/model";
 import Treeselect from "@riophae/vue-treeselect";
 import "@riophae/vue-treeselect/dist/vue-treeselect.css";
+
 export default {
   name: "Form",
   components: { Treeselect },
-  props: {
-    
-  },
+  props: {},
   data() {
+    let checkHandlingFee = (rule, value, callback)=> {
+      if (value > 0) {
+        callback();
+      } else {
+        callback( new Error("手续费数额不能小于0"));
+      }
+    };
     return {
       dialog: false,
       loading: false,
       form: { type: "", handlingFee: "" },
       rules: {
         handlingFee: [
-          { required: true, message: "请输入手续费数额", trigger: "blur" }
+          { required: true, message: "请输入手续费数额", trigger: "blur" },
+          { validator: checkHandlingFee, trigger: "blur" }
         ],
-        type: [{ required: true, message: "手续费类型不能为空", trigger: "blur" }]
+        type: [
+          { required: true, message: "手续费类型不能为空", trigger: "blur" }
+        ]
       }
     };
   },
+
   created() {
     this.init();
   },
@@ -45,17 +56,18 @@ export default {
     init() {
       var that = this;
       withdrawInfo().then(res => {
-        console.log('init',res)
+        console.log("init", res);
         that.form = res;
       });
     },
+
     doSubmit() {
       this.$refs["form"].validate(valid => {
         if (valid) {
           this.loading = true;
           withdrawSave(this.form)
             .then(res => {
-              console.log('withdrawSave',res);
+              console.log("withdrawSave", res);
               this.resetForm();
               this.$notify({
                 title: "修改成功",
@@ -85,5 +97,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-
 </style>

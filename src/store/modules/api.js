@@ -8,7 +8,9 @@ const api = {
     // 修改头像
     updateAvatarApi: baseUrl + '/api/users/updateAvatar',
     // 上传文件到七牛云
-    qiNiuUploadApi: baseUrl + '/api/qiNiuContent'
+    qiNiuUploadApi: baseUrl + '/api/qiNiuContent',
+    //上传证书
+    uploadCerts:baseUrl+'/api/file/uploadCerts'
   }
 }
 

@@ -67,3 +67,10 @@ export function orderlogistics(data) {
     data
   })
 }
+export function addorder(data) {
+  return request({
+    url: 'api/order/submit',
+    method: 'post',
+    data
+  })
+}

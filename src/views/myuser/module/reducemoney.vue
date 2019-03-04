@@ -8,7 +8,7 @@
   >
     <el-form :model="postdata" :rules="rules" ref="ruleForm" label-width="140px">
       <el-form-item label="扣除余额" prop="deductionsAmount">
-        <el-input v-model.number="postdata.deductionsAmount"></el-input>
+        <el-input v-model="postdata.deductionsAmount"></el-input>
       </el-form-item>
       <el-form-item label="备注" prop="remark">
         <el-input v-model="postdata.remark"></el-input>
@@ -35,6 +35,22 @@ export default {
     }
   },
   data() {
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入扣款金额"));
+      } else {
+        if (!isNaN(Number(value)) && Number(value) > 0) {
+          console.log(value, !isNaN(Number(value)));
+          if (value.split(".")[1] && value.split(".")[1].length > 2) {
+            callback(new Error("扣款金额最多只能输入2位小数"));
+          } else {
+            callback();
+          }
+        } else {
+          callback(new Error("请输入正确的扣款金额"));
+        }
+      }
+    };
     return {
       dialog: false,
       postdata: {
@@ -46,10 +62,7 @@ export default {
       },
       loading: false,
       rules: {
-        deductionsAmount: [
-          { required: true, message: "请输入充值金额", trigger: "blur" },
-          { type: "number", message: "金额必须为数字值" }
-        ]
+        deductionsAmount: [{ validator: validatePass2, trigger: "blur" }]
       }
     };
   },
@@ -58,33 +71,36 @@ export default {
   },
   methods: {
     truepost(formName) {
-      console.log(this.$refs)
+      console.log(this.$refs);
       this.$refs[formName].validate(valid => {
         console.log("valid", valid);
         if (valid) {
           this.loading = true;
           this.postdata.account.id = this.accid;
           console.log("postdata", this.postdata);
-          if(Number(this.postdata.deductionsAmount)>0){
-            reducemoney(this.postdata).then(res => {
+          if (Number(this.postdata.deductionsAmount) > 0) {
+            reducemoney(this.postdata)
+              .then(res => {
+                this.loading = false;
+                this.$notify({
+                  title: "扣款成功",
+                  type: "success",
+                  duration: 1500
+                });
+                this.dialog = false;
+                this.reload();
+              })
+              .catch(() => {
+                this.loading = false;
+              });
+          } else {
             this.loading = false;
-            this.$notify({
-              title: "扣款成功",
-              type: "success",
-              duration: 1500
-            });
-            this.dialog = false;
-            this.reload();
-          }).catch(()=>{
-            this.loading = false;
-          });
-          }else{
             this.$notify({
               title: "扣款金额不能小于0",
               type: "success",
               duration: 1500
             });
-          }  
+          }
         } else {
           console.log("error submit!!");
           return false;

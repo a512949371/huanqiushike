@@ -7,26 +7,26 @@
       width="70%"
       style="max-height:80%;overflow: scroll-y"
     >
-      <div>
+      <div ref="form">
         <div class="tit">基础信息</div>
         <div class="flex">
           <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">账号:</div>
-            <div class="info">{{data.account.userName||''}}</div>
+            <div class="info">{{accinfo.userName||''}}</div>
           </div>
           <div class="right flex-box-bwteen pl10">
             <div class="desc">姓名:</div>
-            <div class="info">{{data.account.realName}}</div>
+            <div class="info">{{accinfo.realName||''}}</div>
           </div>
         </div>
         <div class="flex">
           <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">身份证号:</div>
-            <div class="info">{{data.account.idCard}}</div>
+            <div class="info">{{accinfo.idCard||''}}</div>
           </div>
           <div class="right flex-box-bwteen pl10">
             <div class="desc">注册时间:</div>
-            <div class="info">{{ parseTime(data.account.createTime) }}</div>
+            <div class="info">{{ parseTime(accinfo.createTime||'') }}</div>
           </div>
         </div>
         <div class="flex">
@@ -89,7 +89,7 @@
         <div class="flex">
           <div class="left flex-box-bwteen pt10 pr10">
             <div class="desc">消费金额:</div>
-            <div class="info">{{data.consumeAmount}}</div>
+            <div class="info">{{data.consumeAmount||0}}元</div>
           </div>
           <div class="right flex-box-bwteen pl10">
             <div class="desc">公排奖励总额:</div>
@@ -119,7 +119,13 @@
       </div>
       <div class="pt20">
         <div class="tit">子账号信息</div>
-        <el-table v-loading="loading" :data="childdata" size="small" border style="width: 100%;">
+        <el-table
+          v-loading="loading"
+          :data="childdata.data"
+          size="small"
+          border
+          style="width: 100%;"
+        >
           <el-table-column prop="accountNo" label="子账号"/>
           <el-table-column label="创建时间">
             <template slot-scope="scope">
@@ -137,19 +143,19 @@
               <!-- <span v-if="scope.row.status=='0'">正常</span>
               <span v-if="scope.row.status=='1'">出局</span>
               <span v-if="scope.row.status=='2'">晋级</span>
-              <span v-if="scope.row.status=='3'">排位中</span> -->
+              <span v-if="scope.row.status=='3'">排位中</span>-->
             </template>
           </el-table-column>
           <el-table-column prop="groupEnum" label="出局位置"/>
           <el-table-column label="出局时间">
             <template slot-scope="scope">
-              <span v-if="scope.row.status=='出局'">{{ parseTime(scope.row.effectiveTime) }}</span>
+              <span v-if="scope.row.status=='出局'">{{ parseTime(scope.row.outTime) }}</span>
             </template>
           </el-table-column>
           <el-table-column prop="price" label="公排奖励"/>
-          <el-table-column prop="createTime" label="操作">
+          <el-table-column label="操作">
             <template slot-scope="scope">
-              <el-button 
+              <el-button
                 v-if="scope.row.status=='正常'"
                 slot="reference"
                 type="danger"
@@ -159,12 +165,20 @@
             </template>
           </el-table-column>
         </el-table>
+        <!--分页组件-->
+        <el-pagination
+          :total="childdata.count"
+          style="margin-top: 8px;"
+          layout="total, prev, pager, next, sizes"
+          @size-change="sizeChange"
+          @current-change="pageChange"
+        />
       </div>
-      <Child :data="onedata" :accid="data.account.id" ref="child"></Child>
-      <Editname ref="editname" :accid="data.account.id"></Editname>
+      <Child :data="onedata" :accid="accinfo.id||0" ref="child"></Child>
+      <Editname ref="editname" :accid="accinfo.id||0"></Editname>
       <Banklist ref="banklist" :data="data.withdrawlist"></Banklist>
-      <Getmoney ref="getmoney" :accid="data.account.id"></Getmoney>
-      <Reducemoney ref="reducemoney" :accid="data.account.id"></Reducemoney>
+      <Getmoney ref="getmoney" :accid="accinfo.id||0"></Getmoney>
+      <Reducemoney ref="reducemoney" :accid="accinfo.id||0"></Reducemoney>
       <div slot="footer" class="dialog-footer">
         <el-button type="text" @click="cancel">关闭</el-button>
       </div>
@@ -191,8 +205,9 @@ export default {
       type: Object,
       required: true
     },
-    childdata: {
-      type: Array
+    accinfo: {
+      type: Object,
+      required: true
     },
     // index.vue 的this 可用于刷新数据
     sup_this: {
@@ -203,10 +218,14 @@ export default {
   data() {
     return {
       getdata: {},
+      page: 0,
+      size: 10,
+      id: "",
       dialog: false,
       loading: false,
       isadd: false,
-      onedata: {}
+      onedata: {},
+      childdata: []
     };
   },
   created() {},
@@ -214,11 +233,12 @@ export default {
     parseTime,
     cancel() {
       this.dialog = false;
+      this.page = 0;
       //this.$emit('closealert',{dialog:false});
     },
     editadd(id) {
       const _this = this.$refs.child;
-      this.childdata.forEach(item => {
+      this.childdata.data.forEach(item => {
         if (item.id == id) {
           this.onedata = item;
         }
@@ -240,6 +260,43 @@ export default {
     reducemoney() {
       const _this = this.$refs.reducemoney;
       _this.dialog = true;
+    },
+    pageChange(e) {
+      var that = this;
+      this.page = e - 1;
+      let data = {
+        page: this.page,
+        size: this.size,
+        id: this.id
+      };
+      this.$store.dispatch("Childlist", data).then(res => {
+        console.log("res2", res, this.$store.state.myuser.childdata);
+        if (res) {
+          let str = JSON.stringify(this.$store.state.myuser.childdata);
+          str = str.replace(/null/g, '""');
+          this.childdata = JSON.parse(str);
+          console.log("4", this.childdata);
+        }
+      });
+    },
+    sizeChange(e) {
+      var that = this;
+      this.page = 0;
+      this.size = e;
+      let data = {
+        page: this.page,
+        size: this.size,
+        id: this.id
+      };
+      this.$store.dispatch("Childlist", data).then(res => {
+        console.log("res2", res, this.$store.state.myuser.childdata);
+        if (res) {
+          let str = JSON.stringify(this.$store.state.myuser.childdata);
+          str = str.replace(/null/g, '""');
+          this.childdata = JSON.parse(str);
+          console.log("4", this.childdata);
+        }
+      });
     }
   }
 };

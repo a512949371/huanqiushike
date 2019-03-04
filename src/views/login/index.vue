@@ -19,7 +19,6 @@
           <span v-else>登 录 中...</span>
         </el-button>
       </el-form-item>
-      <p class="login-tip">系统默认用户名：admin，密码：1234567</p>
     </el-form>
   </div>
 </template>
@@ -106,7 +105,7 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image:url(	https://aurora-1255840532.cos.ap-chengdu.myqcloud.com/1547428971990.jpg);
+    background-image:url(	http://qqgpimg.txw18.com/bg20190225135243.png);
     height: 100%;
   }
   .title {

@@ -16,7 +16,7 @@ export function userinfo(data) {
 export function childlist(data) {
   console.log('da',data)
   return request({
-    url: 'api/account/selectSub?id='+data.id,
+    url: 'api/account/selectSub?id='+data.id+'&page='+data.page+'&size='+data.size,
     method: 'get'
   })
 }

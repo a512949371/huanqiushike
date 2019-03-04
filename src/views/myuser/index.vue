@@ -5,8 +5,10 @@
     <el-table v-loading="loading" :data="listdata.data" size="small" border style="width: 100%;">
       <el-table-column type="index" label="编号"/>
       <el-table-column prop="userName" label="账号"/>
+      <el-table-column prop="nickName" label="昵称"/>
       <el-table-column prop="realName" label="姓名"/>
       <el-table-column prop="parentName" label="推荐人账号"/>
+      <el-table-column prop="balance" label="当前余额"/>
       <el-table-column prop="createTime" label="注册时间">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -59,6 +61,7 @@
     <!--分页组件-->
     <el-pagination
       :total="listdata.count"
+      :current-page="page+1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
@@ -67,8 +70,8 @@
     <edit
       v-if="isRouterAlive"
       ref="form"
-      :childdata="childdata"
       :data="getdata"
+      :accinfo="accinfo"
       :roles="roles"
       :sup_this="sup_this"
     />
@@ -98,6 +101,7 @@ const Index = {
       listdata: [],
       dialog: false,
       getdata: {},
+      accinfo: {},
       childdata: [],
       isRouterAlive: true
     };
@@ -132,22 +136,28 @@ const Index = {
     },
     to(id) {
       const _this = this.$refs.form;
+      let data = {
+        page: _this.page,
+        size: _this.size,
+        id: id
+      };
       this.$store.dispatch("Getuserinfo", { id: id }).then(res => {
         console.log("res", res);
         if (res) {
           let str = JSON.stringify(this.$store.state.myuser.infodata);
           str = str.replace(/null/g, '""');
           this.getdata = JSON.parse(str);
-          console.log("2", this.getdata);
+          this.accinfo = this.$store.state.myuser.infodata.account;
         }
       });
-      this.$store.dispatch("Childlist", { id: id }).then(res => {
-        console.log("res2", res);
+      this.$store.dispatch("Childlist", data).then(res => {
+        console.log("res2", res, this.$store.state.myuser.childdata);
         if (res) {
           let str = JSON.stringify(this.$store.state.myuser.childdata);
           str = str.replace(/null/g, '""');
-          this.childdata = JSON.parse(str);
-          console.log("3", this.childdata);
+          _this.childdata = JSON.parse(str);
+          _this.id = this.$store.state.myuser.childdata.param;
+          console.log("3", _this.childdata);
         }
       });
       _this.dialog = true;
@@ -164,7 +174,7 @@ const Index = {
         size: this.size,
         phone: phone,
         status: status,
-        type: type,
+        type: type
       };
       return true;
     },

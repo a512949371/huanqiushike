@@ -15,7 +15,8 @@ export default {
         this.loading = true
         console.log('postdata',this.params)
         initData(this.url, this.params).then(res => {
-          this.data = res.content
+          this.data = res.content||''
+          this.total=res.totalElements||''
           console.log('data', res)
           setTimeout(() => {
             this.loading = false

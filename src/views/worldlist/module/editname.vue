@@ -57,18 +57,23 @@ export default {
           this.loading = true;
           this.postdata.groupName = this.$route.query.groupName;
           let reg = /^[A-H]/g;
-          newworld(this.postdata).then(res => {
-            this.loading = false;
-            this.$notify({
-              title: "创建成功",
-              type: "success",
-              duration: 1500
+          newworld(this.postdata)
+            .then(res => {
+              this.loading = false;
+              this.$notify({
+                title: "创建成功",
+                type: "success",
+                duration: 1500
+              });
+              this.dialog = false;
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            })
+            .catch(res => {
+              console.log("err", res);
+              this.loading = false;
             });
-            this.dialog = false;
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          });
         } else {
           console.log("error submit!!");
           return false;

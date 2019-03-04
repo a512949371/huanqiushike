@@ -9,7 +9,11 @@
       <el-table-column prop="price" label="奖励金额"/>
       <el-table-column prop="accountNo" label="出局账号"/>
       <el-table-column prop="groupName" label="出局团位"/>
-      <el-table-column prop="createTime" label="到账时间"/>
+      <el-table-column label="到账时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <el-pagination
@@ -58,8 +62,13 @@ export default {
       this.url = "api/bonus/selectList";
       const sort = "id,desc";
       const query = this.query;
-      const phone =query.phone;
-      this.params = { page: this.page, size: this.size, userName: phone,type:1 };
+      const phone = query.phone;
+      this.params = {
+        page: this.page,
+        size: this.size,
+        userName: phone,
+        type: 1
+      };
       console.log("params", query);
       return true;
     },

@@ -22,9 +22,11 @@ const myuser={
     },
     Childlist:function({commit},data){
       return childlist(data).then((res)=>{
-        console.log('Childdata',res.data)
-        commit('Childdata',res.data)
+        console.log('Childdata',res)
+        commit('Childdata',res)
         return true
+      }).catch(()=>{
+        
       })
     }
   }

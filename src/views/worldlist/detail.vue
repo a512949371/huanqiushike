@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <eHeader :query="query" v-on:childMethod="parentMethod"></eHeader>
+    <eHeader :query="query" v-on:childMethod="parentMethod" :isshowbtn="isshowbtn" :groupName="groupName"></eHeader>
     <!--表格渲染-->
     <el-table v-loading="loading" :data="listdata.data" size="small" border style="width: 100%;">
       <el-table-column label="位置">
@@ -18,12 +18,13 @@
       <el-table-column label="账号类型">
         <template slot-scope="scope">
           <span v-if="scope.row.type=='0'">真实子账号</span>
-          <span v-if="scope.row.type=='1'">虚拟子账号</span>
+          <span v-if="scope.row.type=='1'">后台创建虚拟账号</span>
+          <span v-if="scope.row.type=='2'">系统创建虚拟账号</span>
         </template>
       </el-table-column>
       <el-table-column label="出局时间">
         <template slot-scope="scope">
-          <span>{{ parseTime(scope.row.effectiveTime) }}</span>
+          <span v-if="scope.row.status=='OUT'">{{ parseTime(scope.row.outTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column prop="groupEnum" label="出局位置"/>
@@ -38,7 +39,7 @@
       <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <el-button
-            v-if="scope.row.type=='1'"
+            v-if="scope.row.type=='1'||scope.row.type=='2'"
             slot="reference"
             type="primary"
             size="mini"
@@ -78,11 +79,18 @@ const Detail = {
       sup_this: this,
       listdata: [],
       dialog: false,
-      accid: 0
+      accid: 0,
+      isshowbtn: false,
+      groupName:''
     };
   },
   created() {
     var that = this;
+    console.log(this.$route.query);
+    this.groupName=this.$route.query.groupName
+    if (this.$route.query.groupName == "A") {
+      this.isshowbtn = true;
+    }
     this.$nextTick(() => {
       this.init().then(res => {
         console.log("then", res);

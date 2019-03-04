@@ -12,6 +12,12 @@
           <span v-if="scope.row.productClass.className">{{scope.row.productClass.className}}</span>
         </template>
       </el-table-column>
+      <el-table-column label="商品属性">
+        <template slot-scope="scope">
+          <span v-if="scope.row.productModel==0">普通商品</span>
+          <span v-if="scope.row.productModel==1">公排商品</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="sort" label="排序"/>
       <el-table-column prop="price" label="价格"/>
       <el-table-column prop="guige" label="规格"/>
@@ -43,6 +49,7 @@
     <!--分页组件-->
     <el-pagination
       :total="listdata.count"
+      :current-page="page+1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
@@ -98,34 +105,33 @@ const Index = {
     add() {
       const _this = this.$refs.edit;
       this.isadd = false;
-      _this.imgdata=[];
-      _this.imglist=[];
+      _this.imgdata = [];
+      _this.imglist = [];
       _this.dialog = true;
     },
     to(id) {
       const _this = this.$refs.edit;
       this.isadd = true;
-      _this.imgdata=[];
-      _this.imglist=[];
-       console.log("res?", _this.imgdata,_this.imglist);
+      _this.imgdata = [];
+      _this.imglist = [];
+      console.log("res?", _this.imgdata, _this.imglist);
       selectShopOne(id).then(res => {
         console.log("res?", res);
-        _this.postdata = res
-        let imgdata={
-              name:res.imgUrl,
-              url:res.imgUrl
-            }
-        _this.imgdata.push(imgdata)
-        if(res.imglist.length>0){
-          res.imglist.map((item)=>{
-            let data={
-              name:item.imgUrl,
-              url:item.imgUrl,
-            }
-            _this.imglist.push(data)
-          })
+        _this.postdata = res;
+        let imgdata = {
+          name: res.imgUrl,
+          url: res.imgUrl
+        };
+        _this.imgdata.push(imgdata);
+        if (res.imglist.length > 0) {
+          res.imglist.map(item => {
+            let data = {
+              name: item.imgUrl,
+              url: item.imgUrl
+            };
+            _this.imglist.push(data);
+          });
         }
-        
       });
       _this.dialog = true;
     },

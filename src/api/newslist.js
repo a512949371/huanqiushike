@@ -23,8 +23,7 @@ export function editnews(data) {
 export function bannerlist(data) {
   return request({
     url: 'api/advertising/selectList',
-    method: 'post',
-    data
+    method: 'get',
   })
 }
 export function addbanner(data) {

@@ -2,7 +2,7 @@
   <div class="app-container">
     <eHeader :roles="roles" :query="query"/>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="listdata.data.content" size="small" border style="width: 100%;">
+    <el-table v-loading="loading" :data="listdata.data" size="small" border style="width: 100%;">
       <el-table-column prop="id" label="序号"/>
       <el-table-column prop="member" label="会员账号"/>
       <el-table-column prop="memberNickName" label="会员昵称"/>
@@ -11,11 +11,15 @@
       <el-table-column prop="number" label="购买单数"/>
       <el-table-column prop="fireBurn" label="烧伤"/>
       <el-table-column prop="orderSn" label="订单编号"/>
-      <el-table-column prop="createTime" label="到账时间"/>
+      <el-table-column label="到账时间">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <el-pagination
-      :total="listdata.data.totalElements"
+      :total="listdata.count"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
@@ -37,7 +41,7 @@ export default {
     return {
       roles: [],
       sup_this: this,
-      listdata: {data:''}
+      listdata: {}
     };
   },
   created() {
@@ -60,7 +64,7 @@ export default {
       this.url = "api/shareManage";
       const sort = "id,desc";
       const query = this.query;
-      const phone =query.phone;
+      const phone = query.phone;
       this.params = { page: this.page, size: this.size, member: phone };
       console.log("fenxiang params", this.params);
       return true;

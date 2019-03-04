@@ -1,5 +1,5 @@
 <template>
-  <el-dialog :append-to-body="true" :visible.sync="dialog" title="提现记录" width="600px">
+  <el-dialog :append-to-body="true" :visible.sync="dialog" title="提现记录" width="600px" style="max-height:80%;overflow: scroll-y">
     <el-form
       ref="form"
       :model="form"
@@ -26,13 +26,13 @@
         <span>{{form.bankName}}</span>
       </el-form-item>
       <el-form-item label="支付宝账号:" class="item">
-        <span>{{form.bankNo}}</span>
+        <span v-show="form.sign!=0">{{form.bankNo}}</span>
       </el-form-item>
       <el-form-item label="银行卡号:" class="item">
-        <span>{{form.bankNo}}</span>
+        <span v-show="form.sign==0">{{form.bankNo}}</span>
       </el-form-item>
       <el-form-item label="身份证号码:" class="item">
-        <span>{{form.idCard}}</span>
+        <span >{{form.idCard}}</span>
       </el-form-item>
       <el-form-item label="提现金额:" class="item">
         <span>{{form.amount}}</span>
@@ -44,13 +44,13 @@
         <span>{{form.price}}</span>
       </el-form-item>
       <el-form-item label="可用余额:" class="item">
-        <span>{{form.bankNo}}</span>
+        <span>{{form.balance}}</span>
       </el-form-item>
       <el-form-item label="申请时间:" class="item">
         <span>{{form.createTime}}</span>
       </el-form-item>
       <el-form-item label="操作:"></el-form-item>
-      <el-form-item label="设置状态" prop="status" class="item" v-show="form.status==2">
+      <el-form-item label="设置状态" prop="status" class="item" v-show="formStatus==2">
         <el-radio v-model="form.status" label="1">成功提现</el-radio>
         <el-radio v-model="form.status" label="0">提现失败</el-radio>
       </el-form-item>
@@ -73,10 +73,6 @@ export default {
   name: "Form",
   components: { Treeselect },
   props: {
-    isAdd: {
-      type: Boolean,
-      required: true
-    },
     sup_this: {
       type: Object,
       default: null
@@ -92,6 +88,7 @@ export default {
         status: "",
         comment: ""
       },
+      formStatus:0,
       roleIds: [],
     };
   },
@@ -118,7 +115,7 @@ export default {
     },
     resetForm() {
       this.dialog = false;
-      this.$refs["form"].resetFields();
+      // this.$refs["form"].resetFields();
       this.roleIds = [];
       this.form = {
         id: "",

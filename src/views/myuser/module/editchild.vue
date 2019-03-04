@@ -6,7 +6,7 @@
     width="400px"
     :modal="false"
   >
-    <el-form :model="postdata" :rules="rules" ref="ruleForm" label-width="100px">
+    <el-form :model="postdata" :rules="rules" ref="ruleForm" label-width="120px">
       <el-form-item label="请输入新位置" prop="groupPosition">
         <el-input v-model="postdata.groupPosition"></el-input>
       </el-form-item>
@@ -63,18 +63,20 @@ export default {
             (this.postdata.accountSubId = this.data.id),
             (this.postdata.position = this.data.groupName + this.data.position);
           console.log("postdata", this.postdata);
-          editchild(this.postdata).then(res => {
-            this.loading = false;
-            this.$notify({
-              title: "修改成功",
-              type: "success",
-              duration: 1500
+          editchild(this.postdata)
+            .then(res => {
+              this.loading = false;
+              this.$notify({
+                title: "修改成功",
+                type: "success",
+                duration: 1500
+              });
+              this.dialog = false;
+              this.reload();
+            })
+            .catch(() => {
+              this.loading = false;
             });
-            this.dialog = false;
-            this.reload();
-          }).catch(()=>{
-            this.loading = false;
-          });
         } else {
           console.log("error submit!!");
           return false;

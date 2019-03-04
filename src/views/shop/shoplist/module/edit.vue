@@ -2,7 +2,7 @@
   <el-dialog
     :append-to-body="false"
     :visible.sync="dialog"
-    :title="isadd?'编辑分类':'新增分类'"
+    :title="isadd?'编辑商品':'新增商品'"
     width="100%"
     style="padding-left:180px"
     :modal="false"
@@ -17,28 +17,36 @@
             v-for="item in classdata"
             :key="item.id"
             :label="item.className"
-            :value="item.id">
-          </el-option>
+            :value="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <!-- <el-form-item label="关联模式" prop="classNote">
         <el-input v-model="postdata.classNote"></el-input>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item label="排序" prop="sort">
-        <el-input v-model.number="postdata.sort"></el-input>
+        <el-input v-model="postdata.sort"></el-input>
       </el-form-item>
       <el-form-item label="价格" prop="price">
-        <el-input v-model.number="postdata.price"></el-input>
+        <el-input v-model="postdata.price"></el-input>
       </el-form-item>
       <el-form-item label="规格" prop="guige">
         <el-input v-model="postdata.guige"></el-input>
       </el-form-item>
       <el-form-item label="库存" prop="number">
-        <el-input v-model.number="postdata.number"></el-input>
+        <el-input v-model="postdata.number"></el-input>
       </el-form-item>
-      <el-form-item label="首页推荐" prop="className">
-        <el-radio v-model="postdata.isPage" label="0">开启</el-radio>
-        <el-radio v-model="postdata.isPage" label="1">关闭</el-radio>
+      <el-form-item label="商品类型" prop="productModel">
+        <el-radio-group v-model="postdata.productModel">
+          <el-radio label="1">公排商品</el-radio>
+          <el-radio label="0">普通商品</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="首页推荐" prop="isPage">
+        <el-radio-group v-model="postdata.isPage">
+          <el-radio label="0">开启</el-radio>
+          <el-radio label="1">关闭</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item label="商品简介" prop="content">
         <el-input v-model="postdata.content"></el-input>
@@ -65,7 +73,8 @@
       </el-form-item>
       <el-form-item label="详情图片">
         <el-upload
-          class="upload-demo" id="Imglist"
+          class="upload-demo"
+          id="Imglist"
           :action="imagesUploadApi"
           :on-success="imglistsucess"
           :on-remove="imglistremove"
@@ -93,7 +102,7 @@
 import E from "wangeditor";
 import { mapGetters } from "vuex";
 import { getToken } from "@/utils/auth";
-import { initData } from '@/api/data'
+import { initData } from "@/api/data";
 import { addShopOne, editShopOne } from "@/api/shop";
 export default {
   name: "Edit",
@@ -101,60 +110,103 @@ export default {
     isadd: {
       type: Boolean,
       required: true
-    },
-    data: {
-      type: Object,
-      required: false
     }
   },
   data() {
+    var validatePass2 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入价格"));
+      } else {
+        if (!isNaN(Number(value)) && Number(value) > 0) {
+          console.log(value, !isNaN(Number(value)));
+          if (value.split(".")[1] && value.split(".")[1].length > 2) {
+            callback(new Error("价格最多只能输入2位小数"));
+          } else {
+            callback();
+          }
+        } else {
+          callback(new Error("请输入正确的价格"));
+        }
+      }
+    };
+    var validatePass3 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入商品排序"));
+      } else {
+        console.log(value);
+        if (
+          !isNaN(Number(value)) &&
+          Number(value) > 0 &&
+          value.toString().indexOf(".") == -1
+        ) {
+          callback();
+        } else {
+          this.isprice = false;
+          callback(new Error("请输入一个正整数"));
+        }
+      }
+    };
+    var validatePass4 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入商品库存"));
+      } else {
+        if (
+          !isNaN(Number(value)) &&
+          Number(value) > 0 &&
+          value.toString().indexOf(".") == -1
+        ) {
+          callback();
+        } else {
+          this.isprice = false;
+          callback(new Error("请输入一个正整数"));
+        }
+      }
+    };
     return {
       dialog: false,
       postdata: {
-        imglist:[]
+        imglist: []
       },
       loading: false,
-      classdata:[],
+      classdata: [],
       rules: {
         title: [{ required: true, message: "请输入商品名称" }],
         pcid: [{ required: true, message: "请选择商品分类" }],
-        sort: [
-          { required: true, message: "请输入商品排序" },
-          { type: "number", message: "商品排序必须为数字值" }
-        ],
-        price: [
-          { required: true, message: "请输入商品价格" },
-          { type: "number", message: "商品价格必须为数字值" }
-        ],
-        number: [
-          { required: true, message: "请输入商品价库存" },
-          { type: "number", message: "商品库存必须为数字值" }
-        ],
-        guige: [{ required: false, message: "请输入规格" }],
-        content: [{ required: false, message: "请输入商品描述" }]
+        sort: [{ validator: validatePass3, trigger: "blur" }],
+        price: [{ validator: validatePass2, trigger: "blur" }],
+        number: [{ validator: validatePass4, trigger: "blur" }],
+        guige: [{ required: true, message: "请输入规格" }],
+        content: [{ required: false, message: "请输入商品描述" }],
+        productModel: [{ required: true, message: "商品类型为必选字段" }],
+        isPage: [{ required: true, message: "首页推荐为必选字段" }]
       },
       headers: {
         Authorization: ""
       },
-      showtime:true,
-      imgdata:[],
-      imglist:[]
+      showtime: true,
+      imgdata: [],
+      imglist: [],
+      isprice: true
     };
   },
   created() {
     this.headers.Authorization = "Bearer " + getToken();
-    this.init().then((res)=>{
-      this.classdata=res.data
-      console.log("this.classdata",this.classdata)
-    })
+    this.init().then(res => {
+      this.classdata = res.data;
+      console.log("this.classdata", this.classdata);
+    });
   },
   watch: {
     dialog: function(val, oldval) {
-      if (val && this.showtime) {
+      console.log("isdd", this.isadd);
+      if (val && !this.isadd) {
         setTimeout(() => {
           this.createwangeditor();
-        }, 500);
+        }, 100);
       }
+    },
+    postdata: function(val, oldval) {
+      this.createwangeditor();
     }
   },
   computed: {
@@ -163,7 +215,7 @@ export default {
   methods: {
     createwangeditor() {
       this.showtime = false;
-      console.log("?", this.$refs);
+      // console.log("?", this.$refs,this.postdata.proDetails);
       var editor = new E(this.$refs.editor);
       editor.customConfig.uploadImgShowBase64 = true; // 使用 base64 保存图片
       // 不可修改
@@ -172,8 +224,8 @@ export default {
       editor.customConfig.uploadFileName = "file";
       editor.customConfig.uploadImgServer = this.imagesUploadApi; // 上传图片到服务器
       editor.customConfig.uploadImgHeaders = {
-          'Authorization': "Bearer " + getToken()
-      }
+        Authorization: "Bearer " + getToken()
+      };
       editor.customConfig.uploadImgHooks = {
         before: function(xhr, editor, files) {
           // 图片上传之前触发
@@ -203,7 +255,7 @@ export default {
         customInsert: function(insertImg, result, editor) {
           // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
           // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
-          console.log(result,"result")
+          console.log(result, "result");
           // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
           insertImg(result.data[0]);
 
@@ -214,17 +266,19 @@ export default {
         this.postdata.proDetails = html;
       };
       editor.create();
-      editor.txt.html(this.postdata.proDetails||'')
+      editor.txt.html(this.postdata.proDetails || "");
     },
     init() {
       return new Promise((resolve, reject) => {
-        initData('api/productclass/selectList', { page: 0, size: 10 }).then(res => {
-          console.log('?data', res)
-          resolve(res)
-        }).catch(err => {
-          reject(err)
-        })
-      })
+        initData("api/productclass/selectList", { page: 0, size: 10 })
+          .then(res => {
+            console.log("?data", res);
+            resolve(res);
+          })
+          .catch(err => {
+            reject(err);
+          });
+      });
     },
     truepost(formName, id) {
       console.log("?", this.postdata);
@@ -247,130 +301,134 @@ export default {
     },
     toadd() {
       var that = this;
-      addShopOne(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "创建成功",
-          type: "success",
-          duration: 1500
+      addShopOne(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "创建成功",
+            type: "success",
+            duration: 1500
+          });
+          this.dialog = false;
+          this.postdata.proDetails = "";
+          this.$parent.init().then(res => {
+            console.log("then", res, this.$parent);
+            this.$parent.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        this.$parent.init().then(res => {
-          console.log("then", res, this.$parent);
-          this.$parent.listdata = res;
-        });
-      }).catch((res)=>{
-            console.log('err',res)
-            this.loading = false;
-          });;
     },
     toedit() {
       var that = this;
-      editShopOne(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "编辑成功",
-          type: "success",
-          duration: 1500
+      editShopOne(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "编辑成功",
+            type: "success",
+            duration: 1500
+          });
+          this.postdata.proDetails = "";
+          this.dialog = false;
+          this.$parent.init().then(res => {
+            console.log("then", res);
+            this.$parent.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        this.$parent.init().then(res => {
-          console.log("then", res);
-          this.$parent.listdata = res;
-        });
-      }).catch((res)=>{
-            console.log('err',res)
-            this.loading = false;
-          });;
     },
     cancel() {
       this.$refs.edit.resetFields();
-      this.showtime=true;
-      this.postdata.proDetails='';
-      this.imgdata=[];
-      this.imglist=[];
+      this.showtime = true;
+      this.imgdata = [];
+      this.imglist = [];
+      this.postdata.proDetails = "";
       this.dialog = false;
     },
     imgurlsucess(response, file, fileList) {
       console.log("img", response, file, fileList);
-      let data={
-        name:response.data[0],
-        url:response.data[0]
-      }
-      this.imgdata=[];
+      let data = {
+        name: response.data[0],
+        url: response.data[0]
+      };
+      this.imgdata = [];
       this.imgdata.push(data);
-      if(this.isadd){
-        this.postdata.imgUrl=response.data[0]
-      }else{
-        this.postdata['imgUrl']=response.data[0]
+      if (this.isadd) {
+        this.postdata.imgUrl = response.data[0];
+      } else {
+        this.postdata["imgUrl"] = response.data[0];
       }
-      
     },
     imgurlfail(response, file, fileList) {
       console.log("imgfail", response, file, fileList);
     },
     imgurlremove(file, fileList) {
-        console.log(file, fileList);
-        this.postdata.imgUrl=''
+      console.log(file, fileList);
+      this.postdata.imgUrl = "";
     },
-    imgurlexceed(response, file, fileList){
+    imgurlexceed(response, file, fileList) {
       console.log("exceed", response, file, fileList);
       this.$notify({
-          title: "超过最大上传数量",
-          type: "success",
-          duration: 2000
-        });
+        title: "超过最大上传数量",
+        type: "success",
+        duration: 2000
+      });
     },
     imglistsucess(response, file, fileList) {
       console.log("imglist", response, file, fileList);
-      let data={
-        name:response.data[0],
-        url:response.data[0]
-      }
-        this.postdata.imglist.push({imgUrl:response.data[0]})
+      let data = {
+        name: response.data[0],
+        url: response.data[0]
+      };
+      this.postdata.imglist.push({ imgUrl: response.data[0] });
       // this.imglist.push(data);
     },
     imglistfail(response, file, fileList) {
       console.log("imgfail", response, file, fileList);
     },
-    imglistexceed(response, file, fileList){
+    imglistexceed(response, file, fileList) {
       console.log("exceed", response, file, fileList);
       this.$notify({
-          title: "超过最大上传数量",
-          type: "success",
-          duration: 2000
-        });
+        title: "超过最大上传数量",
+        type: "success",
+        duration: 2000
+      });
     },
     imglistremove(file, fileList) {
-        console.log(file, fileList);
-        this.postdata.imglist=[]
-        this.imglist=[]
-        fileList.map((item)=>{
-          let imgdata={
-            name:item.url,
-            url:item.url,
-          }
-          let data={
-            imgUrl:item.url
-          }
-          this.postdata.imglist.push(data)
-          this.imglist.push(imgdata)
-        })
-        
-      },
+      console.log(file, fileList);
+      this.postdata.imglist = [];
+      this.imglist = [];
+      fileList.map(item => {
+        let imgdata = {
+          name: item.url,
+          url: item.url
+        };
+        let data = {
+          imgUrl: item.url
+        };
+        this.postdata.imglist.push(data);
+        this.imglist.push(imgdata);
+      });
+    }
   }
 };
 </script>
 <style lang="scss">
-.upload-demo ul{
+.upload-demo ul {
   display: flex;
 }
-.upload-demo ul li{
+.upload-demo ul li {
   width: 200px;
   margin-right: 20px;
 }
-.upload-demo ul li a{
-  display: block
+.upload-demo ul li a {
+  display: block;
 }
 </style>
 
@@ -380,14 +438,14 @@ export default {
   font-size: 16px;
   color: #333;
 }
-.ml120{
+.ml120 {
   margin-left: 120px;
 }
 .input {
   flex: 1;
   line-height: 30px;
 }
-.img-box{
+.img-box {
   padding-right: 20px;
 }
 .img {

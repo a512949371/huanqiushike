@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import { parseTime } from '@/utils/index'
-import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+import { parseTime } from "@/utils/index";
+import "@riophae/vue-treeselect/dist/vue-treeselect.css";
 export default {
-  name: 'Form',
+  name: "Form",
   props: {
     dataid: {
       type: Number,
-      required: true,
+      required: true
     },
     isAdd: {
       type: Boolean,
@@ -60,56 +60,57 @@ export default {
   },
   data() {
     return {
-      dialog: false, loading: false,getdata:[]
-    }
+      dialog: false,
+      loading: false,
+      getdata: []
+    };
   },
-  created(){
-    console.log('isAdd',this.isAdd)
-    if(this.isAdd){
-      this.$store.dispatch('Getuserinfo',{ id:this.dataid }).then((res)=>{
-        console.log('res',res)
-        if(res){
-          this.getdata=this.$store.state.myuser.infodata
-          console.log('2',this.getdata)
+  created() {
+    console.log("isAdd", this.isAdd);
+    if (this.isAdd) {
+      this.$store.dispatch("Getuserinfo", { id: this.dataid }).then(res => {
+        console.log("res", res);
+        if (res) {
+          this.getdata = this.$store.state.myuser.infodata;
+          console.log("2", this.getdata);
         }
-      })
+      });
     }
   },
-  mounted(){
-    console.log('3',this.dataid,this.getdata)
+  mounted() {
+    console.log("3", this.dataid, this.getdata);
   },
-  watch:{
-
-  },
+  watch: {},
   methods: {
     parseTime,
     cancel() {
-      this.dialog = false
-    },
+      this.dialog = false;
+    }
   }
-}
+};
 </script>
 
 <style scoped>
-.tit{
+.tit {
   font-size: 16px;
   font-weight: bold;
   padding: 10px 0;
 }
-.left,.right{
+.left,
+.right {
   flex: 1;
   padding-top: 5px;
   padding-bottom: 5px;
 }
-.right{
-  border-left: 1px solid #969696
+.right {
+  border-left: 1px solid #969696;
 }
-.desc{
+.desc {
   font-size: 14px;
-  color: #545454
+  color: #545454;
 }
-.info{
+.info {
   font-size: 14px;
-  color: #545454
+  color: #545454;
 }
 </style>

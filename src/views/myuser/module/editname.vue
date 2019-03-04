@@ -38,7 +38,7 @@ export default {
       loading: false,
       rules: {
         phone: {
-          required: true,
+          required: false,
           message: "请输入推荐人账号",
           trigger: "blur"
         }
@@ -54,18 +54,20 @@ export default {
         if (valid) {
           this.loading = true;
           console.log("postdata", this.postdata);
-          editname(this.postdata).then(res => {
-            this.loading = false;
-            this.$notify({
-              title: "修改成功",
-              type: "success",
-              duration: 1500
+          editname(this.postdata)
+            .then(res => {
+              this.loading = false;
+              this.$notify({
+                title: "修改成功",
+                type: "success",
+                duration: 1500
+              });
+              this.dialog = false;
+              this.reload();
+            })
+            .catch(() => {
+              this.loading = false;
             });
-            this.dialog = false;
-            this.reload();
-          }).catch(()=>{
-            this.loading = false;
-          });
         } else {
           console.log("error submit!!");
           return false;

@@ -25,6 +25,7 @@
     <!--分页组件-->
     <el-pagination
       :total="listdata.count"
+      :current-page="page+1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"
@@ -77,7 +78,8 @@ export default {
         userName: phone,
         type: type
       };
-      console.log("params", query);
+      let tp=this.params.type;
+      console.log("params", tp);
       return true;
     },
     getRoles() {

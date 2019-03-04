@@ -27,7 +27,7 @@
         <p>安全性高的密码可使账号更安全，建议设置同时包含字母，数字，符号的密码。</p>
       </el-card>
 
-      <el-card shadow="never" class="box-card reset-email">
+      <!-- <el-card shadow="never" class="box-card reset-email">
         <h4 class="account-label-icon">邮箱验证：</h4>
         <updateEmail :email="email"/>
         <p>你的邮箱：{{ formatEmail(email) }} </p>
@@ -36,7 +36,7 @@
           <li>安全管理，密码重置与修改</li>
           <li>账号使用，使用邮箱登录系统</li>
         </ul>
-      </el-card>
+      </el-card> -->
     </div>
   </div>
 </template>

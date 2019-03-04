@@ -11,7 +11,7 @@
         <el-input v-model="postdata.className"></el-input>
       </el-form-item>
       <el-form-item label="分类排序" prop="classRank">
-        <el-input v-model.number="postdata.classRank"></el-input>
+        <el-input v-model="postdata.classRank"></el-input>
       </el-form-item>
       <el-form-item label="分类说明" prop="classNote">
         <el-input v-model="postdata.classNote"></el-input>
@@ -57,6 +57,23 @@ export default {
     }
   },
   data() {
+    var validatePass3 = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入分类排序"));
+      } else {
+        console.log(value);
+        if (
+          !isNaN(Number(value)) &&
+          Number(value) > 0 &&
+          value.toString().indexOf(".") == -1
+        ) {
+          callback();
+        } else {
+          this.isprice = false;
+          callback(new Error("请输入一个正整数"));
+        }
+      }
+    };
     return {
       dialog: false,
       postdata: {
@@ -68,10 +85,7 @@ export default {
       loading: false,
       rules: {
         className: [{ required: true, message: "请输入分类名称" }],
-        classRank: [
-          { required: true, message: "请输入分类排序" },
-          { type: "number", message: "排序必须为数字值" }
-        ],
+        classRank: [{ validator: validatePass3, trigger: "blur" }],
         classNote: [{ required: false, message: "请输入分类说明" }]
       },
       headers: {
@@ -113,42 +127,46 @@ export default {
     },
     toadd() {
       var that = this;
-      addClassification(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "创建成功",
-          type: "success",
-          duration: 1500
+      addClassification(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "创建成功",
+            type: "success",
+            duration: 1500
+          });
+          this.dialog = false;
+          this.$parent.init().then(res => {
+            console.log("then", res, this.$parent);
+            this.$parent.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        this.$parent.init().then(res => {
-          console.log("then", res, this.$parent);
-          this.$parent.listdata = res;
-        });
-      }).catch((res)=>{
-        console.log('err',res)
-        this.loading = false;
-      });;
     },
     toedit() {
       var that = this;
-      editClassification(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "编辑成功",
-          type: "success",
-          duration: 1500
+      editClassification(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "编辑成功",
+            type: "success",
+            duration: 1500
+          });
+          this.dialog = false;
+          console.log(this.$parent);
+          this.$parent.init().then(res => {
+            console.log("then", res);
+            this.$parent.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        console.log(this.$parent)
-        this.$parent.init().then(res => {
-          console.log("then", res);
-          this.$parent.listdata = res;
-        });
-      }).catch((res)=>{
-        console.log('err',res)
-        this.loading = false;
-      });;
     },
     cancel() {
       this.$refs.edit.resetFields();

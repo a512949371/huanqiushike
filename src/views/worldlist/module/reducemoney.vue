@@ -53,18 +53,23 @@ export default {
         if (valid) {
           this.loading = true;
           this.postdata.id = this.accid;
-          fchangt(this.postdata).then(res => {
-            this.loading = false;
-            this.$notify({
-              title: "关联成功",
-              type: "success",
-              duration: 1500
+          fchangt(this.postdata)
+            .then(res => {
+              this.loading = false;
+              this.$notify({
+                title: "关联成功",
+                type: "success",
+                duration: 1500
+              });
+              this.dialog = false;
+              setTimeout(() => {
+                window.location.reload();
+              }, 1000);
+            })
+            .catch(res => {
+              console.log("err", res);
+              this.loading = false;
             });
-            this.dialog = false;
-            setTimeout(() => {
-              window.location.reload();
-            }, 1000);
-          });
         } else {
           console.log("error submit!!");
           return false;

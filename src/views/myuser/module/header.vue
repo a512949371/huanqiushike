@@ -6,7 +6,7 @@
     </el-input>
     <!-- <el-input v-model="query.userName" clearable placeholder style="width: 300px">
       <template slot="prepend">推荐人账号:</template>
-    </el-input> -->
+    </el-input>-->
     <el-select
       v-model="query.type"
       clearable
@@ -43,6 +43,7 @@
       type="primary"
       icon="el-icon-search"
       @click="toQuery"
+      style="margin-top:4px"
     >搜索</el-button>
     <!-- 新增 -->
     <!-- <div style="display: inline-block;margin: 0px 2px;">

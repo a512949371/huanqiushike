@@ -1,7 +1,7 @@
 <template>
   <div>
-    <el-button :disabled="data.id === 1" size="mini" type="success" @click="to">编辑</el-button>
-    <eForm ref="form" :sup_this="sup_this" :is-add="false"/>
+    <el-button size="mini" type="success" @click="to">编辑</el-button>
+    <eForm ref="form" :sup_this="sup_this" :is-add="false" />
   </div>
 </template>
 <script>
@@ -26,6 +26,7 @@ export default {
       _this.roleIds = [];
       _this.form = this.data;
       _this.dialog = true;
+      _this.formStatus=Number(this.data.status);
     }
   }
 };

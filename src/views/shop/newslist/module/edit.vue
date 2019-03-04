@@ -49,11 +49,11 @@ export default {
       dialog: false,
       postdata: {
         content: "",
-        title: "",
+        title: ""
       },
       loading: false,
       rules: {
-        title: [{ required: true, message: "请输入文章标题" }],
+        title: [{ required: true, message: "请输入文章标题" }]
       },
       headers: {
         Authorization: ""
@@ -78,10 +78,9 @@ export default {
     }
   },
   mounted() {
-    console.log('data',this.postdata)
+    console.log("data", this.postdata);
   },
-  updated() {
-  },
+  updated() {},
   methods: {
     createwangeditor() {
       this.showtime = false;
@@ -94,8 +93,8 @@ export default {
       editor.customConfig.uploadFileName = "file";
       editor.customConfig.uploadImgServer = this.imagesUploadApi; // 上传图片到服务器
       editor.customConfig.uploadImgHeaders = {
-          'Authorization': "Bearer " + getToken()
-      }
+        Authorization: "Bearer " + getToken()
+      };
       editor.customConfig.uploadImgHooks = {
         before: function(xhr, editor, files) {
           // 图片上传之前触发
@@ -125,7 +124,7 @@ export default {
         customInsert: function(insertImg, result, editor) {
           // 图片上传并返回结果，自定义插入图片的事件（而不是编辑器自动插入图片！！！）
           // insertImg 是插入图片的函数，editor 是编辑器对象，result 是服务器端返回的结果
-          console.log(result,"result")
+          console.log(result, "result");
           // 举例：假如上传图片成功后，服务器端返回的是 {url:'....'} 这种格式，即可这样插入图片：
           insertImg(result.data[0]);
 
@@ -136,11 +135,11 @@ export default {
         this.postdata.content = html;
       };
       editor.create();
-      editor.txt.html(this.postdata.content)
+      editor.txt.html(this.postdata.content);
     },
     truepost(formName, id) {
       this.$refs[formName].validate(valid => {
-        console.log("valid", valid,this.postdata);
+        console.log("valid", valid, this.postdata);
         if (valid) {
           this.loading = true;
           if (this.isadd) {
@@ -158,47 +157,51 @@ export default {
     },
     toadd() {
       var that = this;
-      addnews(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "新增成功",
-          type: "success",
-          duration: 1500
+      addnews(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "新增成功",
+            type: "success",
+            duration: 1500
+          });
+          this.dialog = false;
+          this.su_this.init().then(res => {
+            console.log("then", res, this.$parent);
+            this.su_this.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        this.su_this.init().then(res => {
-          console.log("then", res, this.$parent);
-          this.su_this.listdata = res;
-        });
-      }).catch((res)=>{
-        console.log('err',res)
-        this.loading = false;
-      });;
     },
     toedit() {
       var that = this;
-      editnews(this.postdata).then(res => {
-        this.loading = false;
-        this.$notify({
-          title: "编辑成功",
-          type: "success",
-          duration: 1500
+      editnews(this.postdata)
+        .then(res => {
+          this.loading = false;
+          this.$notify({
+            title: "编辑成功",
+            type: "success",
+            duration: 1500
+          });
+          this.dialog = false;
+          console.log(this.su_this, this.$parent);
+          this.su_this.init().then(res => {
+            console.log("then", res);
+            this.su_this.listdata = res;
+          });
+        })
+        .catch(res => {
+          console.log("err", res);
+          this.loading = false;
         });
-        this.dialog = false;
-        console.log(this.su_this,this.$parent)
-        this.su_this.init().then(res => {
-          console.log("then", res);
-          this.su_this.listdata = res;
-        });
-      }).catch((res)=>{
-        console.log('err',res)
-        this.loading = false;
-      });
     },
     cancel() {
       this.$refs.edit.resetFields();
-      this.showtime=true;
-      this.postdata.content='';
+      this.showtime = true;
+      this.postdata.content = "";
       this.dialog = false;
     },
     uploadsucess(response, file, fileList) {

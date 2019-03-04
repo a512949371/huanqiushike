@@ -33,7 +33,6 @@
       <el-table-column label="操作" width="150px" align="center">
         <template slot-scope="scope">
           <edit
-            v-if="checkPermission(['ADMIN','USER_ALL','USER_EDIT'])"
             :data="scope.row"
             :roles="roles"
             :sup_this="sup_this"
@@ -44,6 +43,7 @@
     <!--分页组件-->
     <el-pagination
       :total="listdata.count"
+      :current-page="page+1"
       style="margin-top: 8px;"
       layout="total, prev, pager, next, sizes"
       @size-change="sizeChange"

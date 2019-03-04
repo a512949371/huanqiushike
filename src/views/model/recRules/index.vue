@@ -24,13 +24,21 @@ export default {
   components: { Treeselect },
   props: {},
   data() {
+    let checkPercent = (rule, value, callback)=> {
+      if (value > 0) {
+        callback();
+      } else {
+        callback( new Error("推荐奖励百分比不能小于0"));
+      }
+    };
     return {
       dialog: false,
       loading: false,
       form: { isEnable: 0, percent: "" },
       rules: {
         percent: [
-          { required: true, message: "请输入推荐奖励百分比", trigger: "blur" }
+          { required: true, message: "请输入推荐奖励百分比", trigger: "blur" },
+          { validator: checkPercent, trigger: "blur" }
         ],
         isEnable: [{ required: true, message: "状态不能为空", trigger: "blur" }]
       }
